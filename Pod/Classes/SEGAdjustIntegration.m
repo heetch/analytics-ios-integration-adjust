@@ -6,11 +6,12 @@
 
 #pragma mark - Initialization
 
-- (instancetype)initWithSettings:(NSDictionary *)settings withAnalytics:(SEGAnalytics *)analytics
+- (instancetype)initWithSettings:(NSDictionary *)settings analytics:(SEGAnalytics *)analytics delegate:(id <SEGAdjustIntegrationDelegate>)delegate
 {
     if (self = [super init]) {
         self.settings = settings;
         self.analytics = analytics;
+        self.delegate = delegate;
 
         NSString *appToken = [settings objectForKey:@"appToken"];
 
@@ -21,6 +22,12 @@
 
         ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken
                                                     environment:environment];
+        
+        if ([self.delegate respondsToSelector:@selector(appSecretForAdjustIntegration:)])
+        {
+            SEGAdjustAppSecret *appSecret = [self.delegate appSecretForAdjustIntegration:self];
+            [adjustConfig setAppSecret:appSecret.ID info1:appSecret.info1 info2:appSecret.info2 info3:appSecret.info3 info4:appSecret.info4];
+        }
 
         if ([self setEventBufferingEnabled]) {
             [adjustConfig setEventBufferingEnabled:YES];
@@ -165,6 +172,11 @@
             @"adGroup" : attribution.adgroup ?: [NSNull null]
         }
     }];
+    
+    if ([self.delegate respondsToSelector:@selector(adjustIntegration:attributionChanged:)])
+    {
+        [self.delegate adjustIntegration:self attributionChanged:attribution];
+    }
 }
 
 - (NSString *)getMappedCustomEventToken:(NSString *)event
