@@ -33,9 +33,7 @@
             [adjustConfig setEventBufferingEnabled:YES];
         }
 
-        if ([self trackAttributionData]) {
-            [adjustConfig setDelegate:self];
-        }
+        [adjustConfig setDelegate:self];
 
         if ([self setDelay]) {
             double delayTime = [settings[@"delayTime"] doubleValue];
@@ -160,6 +158,11 @@
 
 - (void)adjustAttributionChanged:(ADJAttribution *)attribution
 {
+    if (![self trackAttributionData])
+    {
+        return;
+    }
+
     [self.analytics track:@"Install Attributed" properties:@{
         @"provider" : @"Adjust",
         @"trackerToken" : attribution.trackerToken ?: [NSNull null],
@@ -176,6 +179,14 @@
     if ([self.delegate respondsToSelector:@selector(adjustIntegration:attributionChanged:)])
     {
         [self.delegate adjustIntegration:self attributionChanged:attribution];
+    }
+}
+
+- (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccess
+{
+    if ([self.delegate respondsToSelector:@selector(adjustIntegration:eventTrackingSucceeded:)])
+    {
+        [self.delegate adjustIntegration:self eventTrackingSucceeded:eventSuccess];
     }
 }
 
