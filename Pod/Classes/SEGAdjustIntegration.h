@@ -11,6 +11,7 @@
 @optional
 -(SEGAdjustAppSecret * _Nonnull)appSecretForAdjustIntegration:(SEGAdjustIntegration * _Nonnull)adjustIntegration;
 -(void)adjustIntegration:(SEGAdjustIntegration * _Nonnull)adjustIntegration attributionChanged:(ADJAttribution * _Nonnull)attribution;
+-(void)adjustIntegration:(SEGAdjustIntegration * _Nonnull)adjustIntegration eventTrackingSucceeded:(ADJEventSuccess * _Nullable)eventSuccess;
 
 @end
 
