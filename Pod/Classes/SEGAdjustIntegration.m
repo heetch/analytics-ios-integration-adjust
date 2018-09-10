@@ -23,8 +23,7 @@
         ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken
                                                     environment:environment];
         
-        if ([self.delegate respondsToSelector:@selector(appSecretForAdjustIntegration:)])
-        {
+        if ([self.delegate respondsToSelector:@selector(appSecretForAdjustIntegration:)]) {
             SEGAdjustAppSecret *appSecret = [self.delegate appSecretForAdjustIntegration:self];
             [adjustConfig setAppSecret:appSecret.ID info1:appSecret.info1 info2:appSecret.info2 info3:appSecret.info3 info4:appSecret.info4];
         }
@@ -158,8 +157,7 @@
 
 - (void)adjustAttributionChanged:(ADJAttribution *)attribution
 {
-    if (![self trackAttributionData])
-    {
+    if (![self trackAttributionData]) {
         return;
     }
 
@@ -176,18 +174,25 @@
         }
     }];
     
-    if ([self.delegate respondsToSelector:@selector(adjustIntegration:attributionChanged:)])
-    {
+    if ([self.delegate respondsToSelector:@selector(adjustIntegration:attributionChanged:)]) {
         [self.delegate adjustIntegration:self attributionChanged:attribution];
     }
 }
 
 - (void)adjustEventTrackingSucceeded:(ADJEventSuccess *)eventSuccess
 {
-    if ([self.delegate respondsToSelector:@selector(adjustIntegration:eventTrackingSucceeded:)])
-    {
+    if ([self.delegate respondsToSelector:@selector(adjustIntegration:eventTrackingSucceeded:)]) {
         [self.delegate adjustIntegration:self eventTrackingSucceeded:eventSuccess];
     }
+}
+
+- (BOOL)adjustDeeplinkResponse:(nullable NSURL *)deeplink
+{
+    if ([self.delegate respondsToSelector:@selector(adjustIntegration:deeplinkResponse:)]) {
+        return [self.delegate adjustIntegration:self deeplinkResponse:deeplink];
+    }
+
+    return NO;
 }
 
 - (NSString *)getMappedCustomEventToken:(NSString *)event
@@ -206,7 +211,6 @@
 {
     return [(NSNumber *)[self.settings objectForKey:@"setEnvironmentProduction"] boolValue];
 }
-
 
 - (BOOL)trackAttributionData
 {
